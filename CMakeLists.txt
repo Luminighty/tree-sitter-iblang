@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-iblang
-        VERSION "0.2.1"
+        VERSION "0.2.2"
         DESCRIPTION "Iblang grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/luminighty/tree-sitter-iblang"
         LANGUAGES C)

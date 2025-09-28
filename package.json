@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-iblang",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Iblang grammar for tree-sitter",
   "repository": "https://github.com/luminighty/tree-sitter-iblang",
   "license": "MIT",
