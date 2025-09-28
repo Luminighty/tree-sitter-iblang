@@ -1,0 +1,39 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "iblang",
+      "camelcase": "IbLang",
+      "title": "IbLang",
+      "scope": "source.iblang",
+      "file-types": [
+        "ib"
+      ],
+      "injection-regex": "^iblang$",
+      "class-name": "TreeSitterIblang"
+    }
+  ],
+  "metadata": {
+    "version": "0.2.0",
+    "license": "MIT",
+    "description": "Iblang grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Luminight",
+        "url": "https://luminight.dev/"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/Luminighty/tree-sitter-iblang"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
