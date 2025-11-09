@@ -15,7 +15,7 @@
     }
   ],
   "metadata": {
-    "version": "0.2.2",
+    "version": "1.0.0",
     "license": "MIT",
     "description": "Iblang grammar for tree-sitter",
     "authors": [

@@ -7,9 +7,10 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-function separated(rule, separator=",") {
-  return seq(rule, repeat(seq(separator, rule)), optional(separator))
-
+function separated(rule, separator=",", allow_tail_sep=true) {
+  const list = [rule, repeat(seq(separator, rule))]
+  if (allow_tail_sep) list.push(optional(separator))
+  return seq(...list)
 }
 
 module.exports = grammar({
@@ -31,15 +32,22 @@ module.exports = grammar({
 
   rules: {
     // TODO: add the actual grammar rules
-    source_file: $ => repeat($.declaration),
+    source_file: $ => repeat(choice($.declaration, $.import)),
 
-    declaration: $ => choice(
-      $.fn_definition,
-      $.struct_definition,
-      $.extern_definition,
-      $.const_declaration,
-      $.var_declaration,
+    declaration: $ => seq(
+      optional("pub"),
+      choice(
+        $.fn_definition,
+        $.struct_definition,
+        $.union_definition,
+        $.enum_definition,
+        $.extern_definition,
+        $.global_const_declaration,
+        $.var_declaration,
+      )
     ),
+
+    import: $ => seq("import", $.string),
 
     comment: $ => token(
       choice(
@@ -47,34 +55,61 @@ module.exports = grammar({
         seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/")
       )
     ),
-    extern_definition: $ => seq("extern", $.prototype),
+    extern_definition: $ => seq("extern", choice($.extern_fn, $.extern_global)),
+    extern_global: $ => seq($.identifier, ":", $.typeident, ";"),
+    extern_fn: $ => $.prototype,
 
     fn_definition: $ => seq("fn", $.prototype, $.block),
 
     prototype: $ => seq($.identifier, $.param_list, optional($.return_type)),
     return_type: $ => seq(":", choice("void", $.typeident)),
 
-    param_list: $ => seq('(', optional(separated($.param_item)), ')'),
-
+    param_list: $ => seq(
+      '(', 
+        optional(separated($.param_item, ",", false)),
+        optional(seq(",", optional("..."))),
+      ')'
+    ),
     param_item: $ => seq($.identifier, ":", $.typeident),
 
-    typeident: $ => seq(
-      optional("*"),
+    typeident: $ => prec.right(seq(
+      optional(repeat("*")),
       choice(
+        prec(20, $.typeident_any),
         prec(10, $.typeident_primitive),
-        $.identifier
+        $.identifier,
+        $.typeident_fn,
       ),
       repeat(seq("[", $.expression, "]"))
+    )),
+    typeident_fn: $ => seq(
+      "fn", 
+      "(", 
+      separated($.typeident, ",", false), optional(seq(",", optional("..."))), 
+      ")",
+      optional(seq(":", $.typeident))
     ),
+    typeident_any: $ => token(seq("*", "any")),
     typeident_primitive: $ => choice(
       "int", "str", "char", "bool", "float",
     ),
 
+    enum_definition: $ => seq(
+      "enum", $.identifier, 
+      "{", separated($.enum_field), "}",
+    ),
+    enum_field: $ => seq(
+      $.identifier, optional(seq("=", $.expression)),
+    ),
+    union_definition: $ => seq(
+      "union", $.identifier, 
+      "{", separated($.object_field), "}",
+    ),
     struct_definition: $ => seq(
       "struct", $.identifier, 
-      "{", separated($.struct_field), "}",
+      "{", separated($.object_field), "}",
     ),
-    struct_field: $ => seq($.identifier, ":", $.typeident),
+    object_field: $ => seq($.identifier, ":", $.typeident),
 
     block: $ => seq("{", repeat($.statement), "}"),
 
@@ -85,13 +120,54 @@ module.exports = grammar({
       $.return,
       $.if_statement,
       $.loop_statement,
+      $.for_statement,
       $.while_statement,
+      $.match_statement,
+      $.break,
+      $.continue,
       seq($.expression, ";")
     ),
+    break: $ => seq("break", ";"),
+    continue: $ => seq("continue", ";"),
+
+    for_statement: $ => seq(
+      "for", 
+      choice($.var_declaration, seq($.expression, ";")),
+      $.expression,
+      ";",
+      $.expression,
+      $.block,
+    ),
+    match_statement: $ => seq(
+      "match",
+      $.expression,
+      "{", repeat($.match_arm), "}"
+    ),
+    match_arm: $ => seq(
+      separated($.match_arm_cond, "|", false),
+      "=>",
+      choice(
+        $.block,
+        $.return,
+        $.match_statement,
+        $.break,
+        $.continue,
+        seq($.expression, ","),
+      )
+    ),
+    match_arm_cond: $ => choice($.number, $.char, $.path, "_"),
+    path: $ => seq($.identifier, repeat(seq("::", $.identifier))),
 
     var_declaration: $ => seq(
       "let", $.identifier, optional(seq(":", $.typeident)),
       "=", $.expression, ";"
+    ),
+    global_const_declaration: $ => seq(
+      "const", $.identifier, 
+      choice(
+        seq(optional(seq(":", $.typeident)), "=", $.expression, ";"),
+        seq("=", $.import)
+      ),
     ),
     const_declaration: $ => seq(
       "const", $.identifier, optional(seq(":", $.typeident)),
@@ -121,12 +197,16 @@ module.exports = grammar({
       $.string,
       $.char,
       $.bool,
+      $.null,
       $.fn_call,
       $.struct_init,
       $.identifier,
+      $.array_init,
+      seq("sizeof", "(", $.typeident, ")"),
     ),
 
     bool: $ => choice("true", "false"),
+    null: $ => "null",
 
     fn_call: $ => seq(
       $.identifier,
@@ -154,21 +234,28 @@ module.exports = grammar({
       )
     ),
     binary_expression: $ => choice(
-      prec.right(2, seq($.expression, "=", $.expression)),
-      prec.left(8, seq($.expression, "||", $.expression)),
-      prec.left(6, seq($.expression, "&&", $.expression)),
-      prec.left(10, seq($.expression, "==", $.expression)),
-      prec.left(10, seq($.expression, "!=", $.expression)),
-      prec.left(12, seq($.expression, ">", $.expression)),
-      prec.left(12, seq($.expression, ">=", $.expression)),
-      prec.left(12, seq($.expression, "<", $.expression)),
-      prec.left(12, seq($.expression, "<=", $.expression)),
-      prec.left(20, seq($.expression, "+", $.expression)),
-      prec.left(20, seq($.expression, "-", $.expression)),
-      prec.left(30, seq($.expression, "*", $.expression)),
-      prec.left(32, seq($.expression, "/", $.expression)),
-      prec.left(34, seq($.expression, "%", $.expression)),
+      prec.right(2, seq($.expression,  "=", $.expression)),
+      prec.right(2, seq($.expression,  "+=", $.expression)),
+      prec.right(2, seq($.expression,  "-=", $.expression)),
+      prec.right(2, seq($.expression,  "/=", $.expression)),
+      prec.right(2, seq($.expression,  "*=", $.expression)),
+      prec.right(2, seq($.expression,  "%=", $.expression)),
+      prec.left(8, seq($.expression,   "||", $.expression)),
+      prec.left(6, seq($.expression,   "&&", $.expression)),
+      prec.left(10, seq($.expression,  "==", $.expression)),
+      prec.left(10, seq($.expression,  "!=", $.expression)),
+      prec.left(12, seq($.expression,  ">", $.expression)),
+      prec.left(12, seq($.expression,  ">=", $.expression)),
+      prec.left(12, seq($.expression,  "<", $.expression)),
+      prec.left(12, seq($.expression,  "<=", $.expression)),
+      prec.left(20, seq($.expression,  "+", $.expression)),
+      prec.left(20, seq($.expression,  "-", $.expression)),
+      prec.left(30, seq($.expression,  "*", $.expression)),
+      prec.left(32, seq($.expression,  "/", $.expression)),
+      prec.left(34, seq($.expression,  "%", $.expression)),
+      prec.left(40, seq($.expression,  "as", $.typeident)),
       prec.left(120, seq($.expression, ".", $.expression)),
+      prec.left(130, seq($.expression, "::", $.expression)),
       prec.left(100, seq($.expression, "[", $.expression, "]")),
     ),
 
@@ -176,13 +263,13 @@ module.exports = grammar({
     number: $ => token(seq(/[0-9]+/, optional(seq(".", /[0-9]+/)))),
     string: $ => seq(
       '"',
-      repeat(choice($.string_escape, /./)),
+      repeat(choice($.string_escape, /[^"\\\n]/)),
       token.immediate('"')
     ),
     string_escape: $ => token.immediate(/\\[ntr0"]/),
     char: $ => seq(
       "'",
-      choice($.char_escape, /./),
+      choice($.char_escape, /[^\'\\\n]/),
       token.immediate("'")
     ),
     char_escape: $ => token.immediate(/\\[ntr0']/),
