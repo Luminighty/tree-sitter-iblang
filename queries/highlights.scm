@@ -16,6 +16,7 @@
 "import" @keyword
 "for" @keyword
 "sizeof" @keyword
+"pub" @keyword
 
 "(" @punctuation.bracket
 ")" @punctuation.bracket
