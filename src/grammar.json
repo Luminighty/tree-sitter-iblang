@@ -2564,8 +2564,15 @@
                 "name": "hexa_escape"
               },
               {
-                "type": "PATTERN",
-                "value": "[^\"\\\\\\n]"
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 100,
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[^\"\\\\\\n]"
+                  }
+                }
               }
             ]
           }

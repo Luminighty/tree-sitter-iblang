@@ -34,11 +34,12 @@
 (comment) @comment
 
 (prototype (identifier) @function)
-(fn_call (path) @function)
-(fn_call (identifier) @function)
+(fn_call (path) @function.call)
+(fn_call (identifier) @function.call)
 (param_item (identifier) @variable.parameter)
 
 (struct_init (path) @constructor)
+(struct_init (identifier) @constructor)
 (object_field (identifier) @property)
 (struct_init_field (identifier) @property)
 
@@ -48,16 +49,13 @@
 (typeident_primitive) @type.builtin
 "void" @type.builtin
 
-(number) @constant.builtin
-(bool) @constant.builtin
+; Literals
+(number) @number
+(bool) @boolean
 (null) @constant.builtin
 (primary (path) @constant.enum)
 (match_arm_cond (path) @constant.enum)
 (constant) @constant
-
-(string_escape) @escape
-(char_escape) @escape
-(hexa_escape) @escape
 
 "*" @operator
 "&" @operator
@@ -90,7 +88,10 @@
 ">>=" @operator
 "<<=" @operator
 
-(char) @string
+(char) @character
+(char_escape) @character.escape
 (string) @string
+(string_escape) @string.escape
+(hexa_escape) @string.escape
 
 (ERROR) @error

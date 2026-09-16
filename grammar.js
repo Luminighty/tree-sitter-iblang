@@ -282,7 +282,7 @@ module.exports = grammar({
     binary_number:  $ => token(/0b[0-1_]+/),
     string: $ => seq(
       '"',
-      repeat(choice($.string_escape, $.hexa_escape, /[^"\\\n]/)),
+      repeat(choice($.string_escape, $.hexa_escape, token(prec(100, /[^"\\\n]/)))),
       token.immediate('"')
     ),
     string_escape: $ => token.immediate(/\\[ntr0"]/),
