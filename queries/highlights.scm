@@ -55,7 +55,8 @@
 (number) @number
 (bool) @boolean
 (null) @constant.builtin
-(primary (path) @constant.enum)
+(primary (path) @variable)
+(primary (identifier) @variable)
 (match_arm_cond (path) @constant.enum)
 (constant) @constant
 
