@@ -1,22 +1,22 @@
-"fn" @keyword
-"return" @keyword
-"struct" @keyword
-"enum" @keyword
-"union" @keyword
-"extern" @keyword
+"fn" @keyword.function
+"return" @keyword.return
+"struct" @keyword.type
+"enum" @keyword.type
+"union" @keyword.type
+"extern" @keyword.modifier
 "let" @keyword
 "const" @keyword
-"if" @keyword
-"else" @keyword
-"loop" @keyword
-"while" @keyword
-"match" @keyword
-"break" @keyword
-"continue" @keyword
-"import" @keyword
-"for" @keyword
+"if" @keyword.conditional
+"else" @keyword.conditional
+"match" @keyword.conditional
+"loop" @keyword.repeat
+"while" @keyword.repeat
+"for" @keyword.repeat
+"break" @keyword.repeat
+"continue" @keyword.repeat
+"import" @keyword.import
 "sizeof" @keyword
-"pub" @keyword
+"pub" @keyword.modifier
 
 "(" @punctuation.bracket
 ")" @punctuation.bracket
@@ -33,6 +33,8 @@
 
 (comment) @comment
 
+(global_const_declaration (identifier) @module (import))
+(import (string) @string.special.path)
 (prototype (identifier) @function)
 (fn_call (path) @function.call)
 (fn_call (identifier) @function.call)
@@ -89,7 +91,7 @@
 "<<=" @operator
 
 (char) @character
-(char_escape) @character.escape
+(char_escape) @string.escape
 (string) @string
 (string_escape) @string.escape
 (hexa_escape) @string.escape
