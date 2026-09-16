@@ -106,6 +106,10 @@
         {
           "type": "char_escape",
           "named": true
+        },
+        {
+          "type": "hexa_escape",
+          "named": true
         }
       ]
     }
@@ -118,6 +122,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "constant",
+          "named": true
+        },
         {
           "type": "expression",
           "named": true
@@ -338,6 +346,10 @@
       "required": true,
       "types": [
         {
+          "type": "constant",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
@@ -476,6 +488,14 @@
           "named": true
         },
         {
+          "type": "constant",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
@@ -500,6 +520,29 @@
         },
         {
           "type": "match_arm",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "number",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_number",
+          "named": true
+        },
+        {
+          "type": "decimal_number",
+          "named": true
+        },
+        {
+          "type": "hexa_number",
           "named": true
         }
       ]
@@ -594,6 +637,10 @@
           "named": true
         },
         {
+          "type": "constant",
+          "named": true
+        },
+        {
           "type": "fn_call",
           "named": true
         },
@@ -607,6 +654,10 @@
         },
         {
           "type": "number",
+          "named": true
+        },
+        {
+          "type": "path",
           "named": true
         },
         {
@@ -765,6 +816,10 @@
       "required": false,
       "types": [
         {
+          "type": "hexa_escape",
+          "named": true
+        },
+        {
           "type": "string_escape",
           "named": true
         }
@@ -800,6 +855,10 @@
       "types": [
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "path",
           "named": true
         },
         {
@@ -842,6 +901,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "path",
           "named": true
         },
         {
@@ -984,6 +1047,10 @@
     "named": false
   },
   {
+    "type": "&=",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -1056,6 +1123,14 @@
     "named": false
   },
   {
+    "type": "<<",
+    "named": false
+  },
+  {
+    "type": "<<=",
+    "named": false
+  },
+  {
     "type": "<=",
     "named": false
   },
@@ -1080,11 +1155,27 @@
     "named": false
   },
   {
+    "type": ">>",
+    "named": false
+  },
+  {
+    "type": ">>=",
+    "named": false
+  },
+  {
     "type": "[",
     "named": false
   },
   {
     "type": "]",
+    "named": false
+  },
+  {
+    "type": "^",
+    "named": false
+  },
+  {
+    "type": "^=",
     "named": false
   },
   {
@@ -1094,6 +1185,10 @@
   {
     "type": "as",
     "named": false
+  },
+  {
+    "type": "binary_number",
+    "named": true
   },
   {
     "type": "bool",
@@ -1121,8 +1216,16 @@
     "named": false
   },
   {
+    "type": "constant",
+    "named": true
+  },
+  {
     "type": "continue",
     "named": false
+  },
+  {
+    "type": "decimal_number",
+    "named": true
   },
   {
     "type": "else",
@@ -1151,6 +1254,14 @@
   {
     "type": "for",
     "named": false
+  },
+  {
+    "type": "hexa_escape",
+    "named": true
+  },
+  {
+    "type": "hexa_number",
+    "named": true
   },
   {
     "type": "identifier",
@@ -1182,10 +1293,6 @@
   },
   {
     "type": "null",
-    "named": true
-  },
-  {
-    "type": "number",
     "named": true
   },
   {
@@ -1238,6 +1345,10 @@
   },
   {
     "type": "|",
+    "named": false
+  },
+  {
+    "type": "|=",
     "named": false
   },
   {
