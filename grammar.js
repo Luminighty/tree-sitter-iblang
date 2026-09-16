@@ -212,10 +212,10 @@ module.exports = grammar({
     bool: $ => choice("true", "false"),
     null: $ => "null",
 
-    fn_call: $ => seq(
-      $.identifier,
+    fn_call: $ => prec(10, seq(
+      choice($.path, $.identifier),
       "(", optional($.call_param_list), ")"
-    ),
+    )),
 
     call_param_list: $ => separated($.expression),
 

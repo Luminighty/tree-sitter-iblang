@@ -291,6 +291,10 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "path",
+          "named": true
         }
       ]
     }

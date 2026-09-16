@@ -34,6 +34,7 @@
 (comment) @comment
 
 (prototype (identifier) @function)
+(fn_call (path) @function)
 (fn_call (identifier) @function)
 (param_item (identifier) @variable.parameter)
 
@@ -56,7 +57,7 @@
 
 (string_escape) @escape
 (char_escape) @escape
-(hexa_escape) @hexa_escape
+(hexa_escape) @escape
 
 "*" @operator
 "&" @operator
