@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-iblang
 HOMEPAGE_URL := https://github.com/luminighty/tree-sitter-iblang
-VERSION := 1.1.4
+VERSION := 1.1.5
 
 # repository
 SRC_DIR := src

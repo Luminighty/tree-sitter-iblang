@@ -14,7 +14,7 @@
 "for" @keyword.repeat
 "break" @keyword.repeat
 "continue" @keyword.repeat
-"import" @keyword.import
+"import" @keyword
 "sizeof" @keyword
 "pub" @keyword.modifier
 
@@ -40,9 +40,14 @@
 (fn_call (identifier) @function.call)
 (param_item (identifier) @variable.parameter)
 
+(struct_definition (identifier) @type.defintion)
+(union_definition (identifier) @type.defintion)
+(object_field (identifier) @property)
+(enum_definition (identifier) @type.defintion)
+(enum_field (identifier) @constant.enum)
+
 (struct_init (path) @constructor)
 (struct_init (identifier) @constructor)
-(object_field (identifier) @property)
 (struct_init_field (identifier) @property)
 
 (typeident) @type
@@ -55,7 +60,7 @@
 (number) @number
 (bool) @boolean
 (null) @constant.builtin
-(primary (path) @variable)
+(primary (path) @variable.member)
 (primary (identifier) @variable)
 (match_arm_cond (path) @constant.enum)
 (constant) @constant
